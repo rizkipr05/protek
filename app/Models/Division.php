@@ -17,7 +17,7 @@ class Division extends Model
         return $this->hasMany(\App\Models\User::class);
     }
 
-    public function tasks()
+    public function ditasks()
     {
         return $this->hasMany(\App\Models\Task::class);
     }
