@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\api\DivisionController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
@@ -35,5 +36,21 @@ Route::middleware('auth:sanctum')->group(function () {
         
             // admin OR owner
             Route::patch('/users/{user}/change-password', [UserController::class,'changePassword']);
+
+            Route::middleware(['auth:sanctum'])->group(function () {
+                // Hanya admin yang boleh create/update/delete
+                Route::get('/divisions', [DivisionController::class, 'index']);
+                Route::get('/divisions/{division}', [DivisionController::class, 'show']);
+            
+            Route::middleware(['can:manage-divisions'])->group(function () {
+                Route::post('/divisions', [DivisionController::class, 'store']);
+                Route::patch('/divisions/{division}', [DivisionController::class, 'update']);
+                Route::delete('/divisions/{division}', [DivisionController::class, 'destroy']);
+            
+                Route::middleware(['role:admin'])->group(function () {
+                    // ...
+            });
         });
+    });
+  });
 });
